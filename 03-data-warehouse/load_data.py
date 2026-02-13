@@ -8,7 +8,7 @@ import time
 
 
 # Change this to your bucket name
-BUCKET_NAME = "dezoomcamp_hw3_2025"
+BUCKET_NAME = "zoomcamp-487311-hw3"
 
 # If you authenticated through the GCP SDK you can comment out these two lines
 CREDENTIALS_FILE = "gcs.json"
