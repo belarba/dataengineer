@@ -8,15 +8,15 @@
 -- =============================================================================
 
 -- Create an external table referencing the parquet files in GCS
-CREATE OR REPLACE EXTERNAL TABLE `<project_id>.<dataset>.yellow_taxi_external`
+CREATE OR REPLACE EXTERNAL TABLE `zoomcamp-487311.hw3.yellow_taxi_external`
 OPTIONS (
   format = 'PARQUET',
-  uris = ['gs://dezoomcamp_hw3_2025/yellow_tripdata_2024-*.parquet']
+  uris = ['gs://zoomcamp-487311-hw3/yellow_tripdata_2024-*.parquet']
 );
 
 -- Create a regular (materialized) table from the external table (no partition, no cluster)
-CREATE OR REPLACE TABLE `<project_id>.<dataset>.yellow_taxi_materialized` AS
-SELECT * FROM `<project_id>.<dataset>.yellow_taxi_external`;
+CREATE OR REPLACE TABLE `zoomcamp-487311.hw3.yellow_taxi_materialized` AS
+SELECT * FROM `zoomcamp-487311.hw3.yellow_taxi_external`;
 
 
 -- =============================================================================
@@ -25,7 +25,7 @@ SELECT * FROM `<project_id>.<dataset>.yellow_taxi_external`;
 -- =============================================================================
 
 SELECT COUNT(*) AS total_records
-FROM `<project_id>.<dataset>.yellow_taxi_materialized`;
+FROM `zoomcamp-487311.hw3.yellow_taxi_materialized`;
 
 -- Answer: 20,332,093
 
@@ -38,11 +38,11 @@ FROM `<project_id>.<dataset>.yellow_taxi_materialized`;
 
 -- On external table:
 SELECT COUNT(DISTINCT PULocationID)
-FROM `<project_id>.<dataset>.yellow_taxi_external`;
+FROM `zoomcamp-487311.hw3.yellow_taxi_external`;
 
 -- On materialized table:
 SELECT COUNT(DISTINCT PULocationID)
-FROM `<project_id>.<dataset>.yellow_taxi_materialized`;
+FROM `zoomcamp-487311.hw3.yellow_taxi_materialized`;
 
 -- Answer: 0 MB for the External Table and 155.12 MB for the Materialized Table
 -- (External tables do not provide estimated bytes in the query plan)
@@ -56,11 +56,11 @@ FROM `<project_id>.<dataset>.yellow_taxi_materialized`;
 
 -- Query 1: Single column
 SELECT PULocationID
-FROM `<project_id>.<dataset>.yellow_taxi_materialized`;
+FROM `zoomcamp-487311.hw3.yellow_taxi_materialized`;
 
 -- Query 2: Two columns
 SELECT PULocationID, DOLocationID
-FROM `<project_id>.<dataset>.yellow_taxi_materialized`;
+FROM `zoomcamp-487311.hw3.yellow_taxi_materialized`;
 
 -- Answer: BigQuery is a columnar database, and it only scans the specific columns
 -- requested in the query. Querying two columns (PULocationID, DOLocationID) requires
@@ -74,7 +74,7 @@ FROM `<project_id>.<dataset>.yellow_taxi_materialized`;
 -- =============================================================================
 
 SELECT COUNT(*) AS zero_fare_count
-FROM `<project_id>.<dataset>.yellow_taxi_materialized`
+FROM `zoomcamp-487311.hw3.yellow_taxi_materialized`
 WHERE fare_amount = 0;
 
 -- Answer: 8,333
@@ -86,10 +86,10 @@ WHERE fare_amount = 0;
 -- =============================================================================
 
 -- Create optimized table: partition by tpep_dropoff_datetime, cluster by VendorID
-CREATE OR REPLACE TABLE `<project_id>.<dataset>.yellow_taxi_partitioned_clustered`
+CREATE OR REPLACE TABLE `zoomcamp-487311.hw3.yellow_taxi_partitioned_clustered`
 PARTITION BY DATE(tpep_dropoff_datetime)
 CLUSTER BY VendorID AS
-SELECT * FROM `<project_id>.<dataset>.yellow_taxi_materialized`;
+SELECT * FROM `zoomcamp-487311.hw3.yellow_taxi_materialized`;
 
 -- Answer: Partition by tpep_dropoff_datetime and Cluster on VendorID
 
@@ -102,12 +102,12 @@ SELECT * FROM `<project_id>.<dataset>.yellow_taxi_materialized`;
 
 -- On the non-partitioned (materialized) table:
 SELECT DISTINCT VendorID
-FROM `<project_id>.<dataset>.yellow_taxi_materialized`
+FROM `zoomcamp-487311.hw3.yellow_taxi_materialized`
 WHERE tpep_dropoff_datetime BETWEEN '2024-03-01' AND '2024-03-15';
 
 -- On the partitioned/clustered table:
 SELECT DISTINCT VendorID
-FROM `<project_id>.<dataset>.yellow_taxi_partitioned_clustered`
+FROM `zoomcamp-487311.hw3.yellow_taxi_partitioned_clustered`
 WHERE tpep_dropoff_datetime BETWEEN '2024-03-01' AND '2024-03-15';
 
 -- Answer: 310.24 MB for non-partitioned table and 26.84 MB for the partitioned table
@@ -140,7 +140,7 @@ WHERE tpep_dropoff_datetime BETWEEN '2024-03-01' AND '2024-03-15';
 -- =============================================================================
 
 SELECT COUNT(*)
-FROM `<project_id>.<dataset>.yellow_taxi_materialized`;
+FROM `zoomcamp-487311.hw3.yellow_taxi_materialized`;
 
 -- Answer: 0 bytes.
 -- BigQuery stores metadata about tables, including the row count. A COUNT(*)
